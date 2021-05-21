@@ -8,7 +8,9 @@ import Todo from './components/Todo';
 
 import Login from "./components/Login";
 
-import { auth, storeUserInfo } from "./lib/firebase";
+import UploadImg from "./components/UploadImg";
+
+import { auth, storeUserInfo, updateInfo } from "./lib/firebase";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -29,6 +31,10 @@ function App() {
         auth.signOut();
     };
 
+    const handleImg = async url => {
+    	await updateInfo(user, url);
+  	}
+
     const UserInfo = () => {
         if (user) {
             return (
@@ -37,6 +43,7 @@ function App() {
             	{user.name}
           	</div>
           	<div class="navbar-item">
+          		<UploadImg userImage={user.image} onSletctedImage={handleImg} />
             	<button class="button is-info is-light is-small" onClick={logout} > Logout</button>
           	</div>
         	</div >
