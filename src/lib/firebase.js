@@ -16,6 +16,10 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore();
 
+export const auth = firebase.auth();
+
+export default firebase;
+
 export const getFbItems = async () => {
   try {
     const snapshot = await db
@@ -56,3 +60,28 @@ export const clearFbItem = async (item) => {
     console.log(err);
   });
 }; 
+
+export const uiConf = {
+  signInFlow: 'popup',
+  signInSuccessUrl: "/",
+  signInOptions: [
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+  ],
+}
+
+export const storeUserInfo = async (user) => {
+  const { uid } = user;
+  const userDoc = await db.collection("users").doc(uid).get();
+  if (!userDoc.exists) {
+    await db.collection("users").doc(uid).set({ name: user.displayName });
+    return {
+      name: user.displayName,
+      id: uid,
+    };
+  } else {
+    return {
+      id: uid,
+      ...userDoc.data(),
+    };
+  }
+} 
