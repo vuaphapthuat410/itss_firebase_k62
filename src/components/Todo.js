@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 
-/* コンポーネント */
+
 import TodoItem from './TodoItem';
 import Input from './Input';
 import Filter from './Filter';
 
-/* カスタムフック */
-import useStorage from '../hooks/storage';
 
-/* ライブラリ */
+//import useStorage from '../hooks/storage';
+import useFbStorage from '../hooks/fbStorage';
+
 import {getKey} from "../lib/util";
 
 function Todo() {
-  const [items, putItems, clearItems] = useStorage();
+  const [items, addItem, updateItem, clearItems] = useFbStorage();
   
   const [filter, setFilter] = React.useState('ALL');
 
@@ -22,18 +22,12 @@ function Todo() {
     if (filter === 'DONE') return item.done;
   });
   
-  const handleCheck = checked => {
-    const newItems = items.map(item => {
-      if (item.key === checked.key) {
-        item.done = !item.done;
-      }
-      return item;
-    });
-    putItems(newItems);
+  const handleCheck = evt => {
+    updateItem(evt);
   };
   
-  const handleAdd = text => {
-    putItems([...items, { key: getKey(), text, done: false }]);
+  const handleAdd = newText => {
+    addItem({ newText, done: false });
   };
   
   const handleFilterChange = value => setFilter(value);
@@ -50,7 +44,7 @@ function Todo() {
       />
       {displayItems.map(item => (
         <TodoItem 
-          key={item.key}
+          key={item.id}
           item={item}
           onCheck={handleCheck}
         />
